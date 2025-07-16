@@ -223,7 +223,7 @@ def main():
             writer.writerow([video_name, f"{opt_time:.2f}", f"{ff_time:.2f}", f"{time_saved:.2f}"])
             print(f"  - {video_name}: Optimized={opt_time:.2f}s, Full Frame={ff_time:.2f}s")
 
-        # --- NEW: Append Inference Time Summary ---
+        # --- Append Inference Time Summary ---
         opt_inf_times = [row[-1] for row in optimized_logs if row[-1] > 0]
         ff_inf_times = [row[-1] for row in full_frame_logs if row[-1] > 0]
         
@@ -238,6 +238,19 @@ def main():
         
         print(f"\n[INFO] Average Inference Time (Optimized): {avg_opt_inf:.2f} ms")
         print(f"[INFO] Average Inference Time (Full Frame): {avg_ff_inf:.2f} ms")
+
+        # --- NEW: Append Average Processing Savings Summary ---
+        # The 'Saving Percentage' is at index 5 of each log row.
+        opt_savings = [row[5] for row in optimized_logs if row[5] < 100.0]
+        
+        avg_opt_saving = sum(opt_savings) / len(opt_savings) if opt_savings else 0
+
+        writer.writerow([])
+        writer.writerow(["--- Average Processing Savings (on motion frames) ---"])
+        writer.writerow(["Analysis Type", "Average Savings (%)"])
+        writer.writerow(["Optimized", f"{avg_opt_saving:.2f}"])
+        
+        print(f"\n[INFO] Average Processing Savings (Optimized, on motion frames): {avg_opt_saving:.2f}%")
 
 
     print("[SUCCESS] Save complete.")
